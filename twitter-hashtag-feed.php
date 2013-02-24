@@ -3,7 +3,7 @@
 Plugin Name: Twitter Hashtag Feed Widget
 Plugin URI: 
 Description: This is a sidebar widget that creates a simple, clean Twitter feed of a specified hashtag.
-Version: 1.0.1
+Version: 1.0.2
 Author: Nick McLarty
 Author URI: http://www.inick.net
 License: GPL2
@@ -102,24 +102,33 @@ class Twitter_Hashtag_Feed_Widget extends WP_Widget {
 	 */
 
 	public function widget( $args, $instance ) {
-		require_once 'twitteroauth/twitteroauth.php';	// TwitterOAuth Library (courtesy of https://github.com/abraham/twitteroauth)
+		extract( $args );
 
-		$url = 'https://api.twitter.com/1.1/search/tweets.json';	// Twitter REST API v1.1 (https://dev.twitter.com/docs/api/1.1)
+		$hash = md5( $instance['hashtag'] );	// Uniquely identify the hashtag being queried from Twitter
+		if ( !$json = get_transient( 'twithashfeed-' . $hash ) ) {	// Prepare once, serve many
+			require_once 'twitteroauth/twitteroauth.php';	// TwitterOAuth Library (courtesy of https://github.com/abraham/twitteroauth)
 
-		$query = array(	'q' => $instance['hashtag'],
-						'result_type' => 'recent',
-						'count' => $instance['results'],
-					);
+			$url = 'https://api.twitter.com/1.1/search/tweets.json';	// Twitter REST API v1.1 (https://dev.twitter.com/docs/api/1.1)
 
-		$conn = new TwitterOAuth( $instance['consumer_key'], $instance['consumer_secret'], 
-			$instance['oauth_token'], $instance['oauth_token_secret'] );
+			$query = array(	'q' => $instance['hashtag'],
+							'result_type' => 'recent',
+							'count' => $instance['results'],
+						);
 
-		$content = $conn->get( $url, $query );
+			$conn = new TwitterOAuth( $instance['consumer_key'], $instance['consumer_secret'], 
+				$instance['oauth_token'], $instance['oauth_token_secret'] );
 
-		echo '<div id="' . $instance['divid'] . '" class="twitter-hashtag-feed-widget">';
+			$content = $conn->get( $url, $query );
+
+			set_transient( 'twithashfeed-' . $hash, json_encode( $content ), 60 );
+		} else {
+			$content = json_decode( $json );
+		}
+
+		echo $before_widget;
 
 		if ( $instance['title'] ) {
-			echo '<h4 class="widgettitle">' . $instance['title'] . '</h4>';
+			echo $before_title . apply_filters( 'widget_title', $instance['title'] ) . $after_title;
 		}
 
 		echo '<ul>';
@@ -147,7 +156,8 @@ class Twitter_Hashtag_Feed_Widget extends WP_Widget {
 			echo 'No results found.';
 		}
 
-		echo '</ul></div>';
+		echo "</ul>" . $after_widget;
+
 	} // public function widget
 
 } // class Twitter_Hashtag_Feed_Widget

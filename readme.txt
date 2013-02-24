@@ -24,6 +24,11 @@ This is a sidebar widget that creates a simple, clean Twitter feed of a specifie
 
 == Changelog ==
 
+= 1.0.2 =
+* Removed widget-specific CSS in lieu of native WordPress CSS ID and class support.
+* Added before/after_widget and before/after_title support.
+* Changed API retrieval from Twitter to a 60-second transient.
+
 = 1.0.1 =
 * Replaced static HTML code in form with PHP foreach.
 
@@ -37,6 +42,4 @@ This is the first release.
 
 == Custom Theming ==
 
-Each widget allows you to specify a div ID for the individual widget. This can be used for applying any desired CSS to the widget. 
-
-All widgets also have the CSS class .twitter-hashtag-feed-widget for uniform styling across all widgets on the site.
+All widgets have the CSS class .widget_twitter_hashtag_feed_widget for uniform styling across all widgets on the site.
