@@ -45,7 +45,7 @@ class Twitter_Hashtag_Feed_Widget extends WP_Widget {
 
 	public function update( $new_instance, $old_instance ) {
 		$instance = array();
-		$args_list = array( 'title', 'divid', 'hashtag', 'consumer_key', 'consumer_secret', 'oauth_token', 'oauth_token_secret', 'results' );
+		$args_list = array( 'title', 'hashtag', 'consumer_key', 'consumer_secret', 'oauth_token', 'oauth_token_secret', 'results' );
 
 		foreach( $args_list as $arg ) {
 			$instance[$arg] = strip_tags( $new_instance[$arg] );
@@ -64,7 +64,6 @@ class Twitter_Hashtag_Feed_Widget extends WP_Widget {
 
 	public function form( $instance ) {
 		$args_list = array(	'title' => 'Title',
-							'divid' => 'Widget Div ID',
 							'hashtag' => 'Twitter Hashtag to Search',
 							'consumer_key' => 'Twitter Consumer Key',
 							'consumer_secret' => 'Twitter Consumer Secret',
@@ -73,7 +72,6 @@ class Twitter_Hashtag_Feed_Widget extends WP_Widget {
 							'results' => 'Number of Results' );
 
 		$title = isset( $instance['title'] ) ? esc_attr( $instance['title'] ) : __( 'New title', 'text_domain' );
-		$divid = isset( $instance['divid'] ) ? esc_attr( $instance['divid'] ) : __( 'twitter-hashtag-feed-widget', 'text_domain' );
 		$hashtag = isset( $instance['hashtag'] ) ? esc_attr( $instance['hashtag'] ) : __( '#hashtag', 'text_domain' );
 		$consumer_key = esc_attr( $instance['consumer_key'] );
 		$consumer_secret = esc_attr( $instance['consumer_secret'] );
